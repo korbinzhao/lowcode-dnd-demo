@@ -11,7 +11,7 @@ const style: CSSProperties = {
 
 export interface SourceBoxProps {
   id: string;
-  onToggleForbidDrag?: () => void;
+  canDrop?: boolean;
   children?: ReactNode;
 }
 
@@ -23,7 +23,11 @@ interface DragItem {
   id: string;
 }
 
-const Box: FC<SourceBoxProps> = memo(function SourceBox({ id, children }) {
+const Box: FC<SourceBoxProps> = memo(function SourceBox({
+  id,
+  canDrop = false,
+  children,
+}) {
   const ref = useRef<HTMLDivElement>(null);
 
   const [{ isDragging }, drag] = useDrag(
@@ -64,7 +68,11 @@ const Box: FC<SourceBoxProps> = memo(function SourceBox({ id, children }) {
     [isDragging, isOver]
   );
 
-  drag(drop(ref));
+  if (canDrop) {
+    drag(drop(ref));
+  } else {
+    drag(ref);
+  }
 
   return (
     <div ref={ref} style={containerStyle} role="Box">
